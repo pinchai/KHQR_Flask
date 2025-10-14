@@ -142,6 +142,7 @@
                 md5: md5,
             }
         }).then(function (response) {
+            console.log(response)
             if (response.data.data == null) {
                 console.log('wait scan to pay')
             } else {
@@ -150,6 +151,7 @@
             }
         })
             .catch(function (error) {
+                console.log(error)
                 clearInterval(intervalId);
             });
 
