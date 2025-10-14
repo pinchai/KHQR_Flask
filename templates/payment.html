@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<style>
+    .ticket {
+        width: 360px;
+        background: #fff;
+        border: 2px solid #222;
+        border-radius: 6px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+    }
+
+    .ticket .head {
+        background: #d72323;
+        color: #fff;
+        padding: 22px 16px;
+        position: relative;
+        text-align: center;
+    }
+
+    .logo {
+        font-weight: 700;
+        letter-spacing: 2px;
+        font-size: 26px;
+        line-height: 1;
+        font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    .head::after {
+        content: '';
+        position: absolute;
+        right: -26px;
+        top: 0;
+        width: 0;
+        height: 0;
+        border-left: 48px solid #fff;
+        border-top: 48px solid transparent;
+        transform: translateY(-6px) rotate(15deg);
+        opacity: 1;
+        filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.06));
+    }
+
+    .content {
+        padding: 18px 22px 8px 22px;
+    }
+
+    .company {
+        color: #666;
+        font-size: 20px;
+        margin-bottom: 6px;
+    }
+
+    .amount-row {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+    }
+
+    .amount {
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .currency {
+        color: #666;
+        font-size: 20px;
+        margin-left: 6px;
+    }
+
+    .divider {
+        margin: 18px 12px;
+        border-top: 2px dashed #cfcfcf;
+    }
+
+    .qr-wrap {
+        padding: 12px 18px 26px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .qr {
+        width: 300px;
+        height: 300px;
+        background: #fff;
+        display: block;
+        object-fit: contain;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+        border: 6px solid #fff; /* white margin around QR like the reference */
+    }
+
+    .timer {
+        font-size: 20px;
+        color: #333;
+    }
+
+    .expired {
+        color: red;
+    }
+</style>
+<body>
+<center>
+    <div class="ticket" role="region" aria-label="KHQR ticket">
+        <div class="head">
+            <div class="logo">KHQR</div>
+        </div>
+
+        <div class="content">
+            <div class="company">{{ merchant_name }}</div>
+
+            <div class="amount-row" aria-hidden="false">
+                <div class="amount">{{ amount }}</div>
+                <div class="currency">{{ currency }}</div>
+            </div>
+            <br>
+            <div class="timer" id="countdown">05:00</div>
+        </div>
+
+        <div class="divider" aria-hidden="true"></div>
+
+        <div class="qr-wrap">
+            <!-- Put your QR image filename here (qrcode.png) -->
+            <img src="/static/qrcode.png" alt="QR code" class="qr">
+        </div>
+    </div>
+    <input type="hidden" id="md5" value="{{ md5 }}">
+</center>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    let count = 0;
+    let intervalId = setInterval(() => {
+        let md5 = document.getElementById("md5").value;
+        axios({
+            method: 'post',
+            url: '/check-payment',
+            data: {
+                md5: md5,
+            }
+        }).then(function (response) {
+            if (response.data.data == null) {
+                console.log('wait scan to pay')
+            } else {
+                clearInterval(intervalId);
+                window.location.replace("{{ url_for('customer_thanks') }}");
+            }
+        })
+            .catch(function (error) {
+                clearInterval(intervalId);
+            });
+
+    }, 3000);
+
+    // Set countdown time in seconds (5 minutes = 300 seconds)
+    let timeLeft = 5 * 60;
+    const countdownElement = document.getElementById('countdown');
+    const countdown = setInterval(() => {
+        // Calculate minutes and seconds
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        // Format with leading zeros (e.g., 04:09)
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        const formattedSeconds = seconds.toString().padStart(2, '0');
+
+        // Display the time
+        countdownElement.textContent = `${formattedMinutes}:${formattedSeconds}`;
+
+        // When time runs out
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            clearInterval(intervalId);
+
+            countdownElement.textContent = "Expired";
+            countdownElement.classList.add("expired");
+        }
+
+        // Decrease time
+        timeLeft--;
+    }, 1000);
+</script>
+</html>

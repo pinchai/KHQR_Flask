@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Payment Received — Thank You</title>
+    <style>
+        :root {
+            --bg: #f6fbff;
+            --card: #ffffff;
+            --accent: #0ea5a4; /* teal-ish */
+            --muted: #6b7280;
+            --shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+            --radius: 14px;
+            --maxw: 760px;
+            --gap: 20px;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+
+        html, body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(180deg, var(--bg) 0%, #eef7fb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            color: #0f172a;
+        }
+
+        .card {
+            width: 100%;
+            max-width: var(--maxw);
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px;
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: var(--gap);
+            align-items: center;
+        }
+
+        /* left column: circle with check */
+        .badge {
+            width: 180px;
+            height: 180px;
+            min-width: 180px;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(14, 165, 164, 0.12), rgba(14, 165, 164, 0.06));
+            margin: auto;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+        }
+
+        .check-svg {
+            width: 110px;
+            height: 110px;
+            display: block;
+        }
+
+        /* animate stroke */
+        .path {
+            stroke: var(--accent);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: draw 0.9s ease-out forwards 0.3s;
+        }
+
+        @keyframes draw {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* right column */
+        h1 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            letter-spacing: -0.2px;
+        }
+
+        p.sub {
+            margin: 0 0 18px 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .order-info {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 12px 14px;
+            min-width: 120px;
+            box-shadow: 0 1px 0 rgba(15, 23, 42, 0.02) inset;
+            font-size: 14px;
+        }
+
+        .info-item b {
+            display: block;
+            font-size: 13px;
+            color: #0f172a
+        }
+
+        .info-item span {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 0;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 6px 18px rgba(14, 165, 164, 0.16);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid #e6eef0;
+        }
+
+        .receipt {
+            margin-top: 18px;
+            border-radius: 10px;
+            padding: 14px;
+            background: #fbfdff;
+            border: 1px solid #eef6f6;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed #eef3f3;
+            font-weight: 700;
+            font-size: 16px;
+            color: #05233b;
+        }
+
+        footer.note {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* responsive */
+        @media (max-width: 720px) {
+            .card {
+                grid-template-columns:1fr;
+                padding: 20px;
+            }
+
+            .badge {
+                min-width: 120px;
+                width: 120px;
+                height: 120px;
+                border-radius: 14px
+            }
+
+            .check-svg {
+                width: 72px;
+                height: 72px
+            }
+        }
+
+        /* print styling: keep only receipt essentials */
+        @media print {
+            body {
+                background: white
+            }
+
+            .card {
+                box-shadow: none;
+                border-radius: 0
+            }
+
+            .actions, footer.note {
+                display: none
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="card" role="main" aria-labelledby="thank-heading">
+    <!-- left: visual -->
+    <div class="badge" aria-hidden="true">
+        <svg class="check-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+            <circle cx="60" cy="60" r="44" fill="none" stroke="rgba(14,165,164,0.14)" stroke-width="10"></circle>
+            <path class="path" d="M36 62 L52 78 L86 44" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <!-- right: message & details -->
+    <section>
+        <h1 id="thank-heading">Payment received — thank you!</h1>
+        <p class="sub">
+            Your payment was successful. We’ve emailed the receipt to <span id="email">customer@example.com</span>.
+            Below is a summary of your order.
+        </p>
+    </section>
+
+    <a href="/" class="btn btn-secondary" id="btn-redirect">Go to Homepage</a>
+</main>
+
+<script>
+    // Example: if you want to populate details dynamically from the server, render them into this page
+    // or replace this script block with server-side templating values.
+    (function () {
+        // Sample dynamic data — replace these values programmatically
+        const data = {
+            email: "chai@example.com",
+            orderId: "TRX-20251014-9876",
+            amount: "9,800 KHR", // or "$98.00"
+            method: "KHQR (Acleda)",
+            paidAt: new Date().toLocaleString(),
+            items: "1 x KHQR Payment",
+            shipping: "N/A",
+            tax: "0 KHR",
+            total: "9,800 KHR"
+        };
+
+        // Populate UI (only if the elements exist)
+        try {
+            document.getElementById("email").textContent = data.email;
+            document.getElementById("order-id").textContent = data.orderId;
+            document.getElementById("paid-amount").textContent = data.amount;
+            document.getElementById("paid-method").textContent = data.method;
+            document.getElementById("paid-at").textContent = data.paidAt;
+            document.getElementById("items-desc").textContent = data.items;
+            document.getElementById("shipping").textContent = data.shipping;
+            document.getElementById("tax").textContent = data.tax;
+            document.getElementById("total").textContent = data.total;
+        } catch (e) {
+            // silent fail if elements missing
+            console.warn(e);
+        }
+
+        // Buttons
+        document.getElementById("btn-print").addEventListener("click", function () {
+            window.print();
+        });
+        document.getElementById("btn-receipt").addEventListener("click", function () {
+            // Replace with link to hosted receipt or open a modal
+            // Example: window.location.href = '/receipt/' + encodeURIComponent(data.orderId);
+            alert("Open receipt for " + data.orderId + " (replace this alert with a real link).");
+        });
+    })();
+</script>
+</body>
+</html>
