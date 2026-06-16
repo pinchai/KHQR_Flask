@@ -15,8 +15,8 @@ def home():
 
 @app.post('/checkout')
 def checkout():
-    price = request.form.get('price')
-    currency = 'USD'  # USD or KHR
+    price = float(request.form.get('price'))
+    currency = 'KHR'  # USD or KHR
     # Create an instance of KHQR with Bakong Developer Token:
     qr = khqr.create_qr(
         bank_account='choeurn_pinchai@aclb',
@@ -28,7 +28,8 @@ def checkout():
         phone_number='85599774967',
         bill_number='INV-00001',
         terminal_label='Cashier-01',
-        static=False  # Static or Dynamic QR code (default: False)
+        static=False,
+        expiration=1
     )
 
     # qr = "00020101021229240020choeurn_pinchai@aclb520459995802KH5916PINCHHAI CHOEURN6009PhnomPenh991700131760188077535541100000000100530311662530111TRX012345670211855997749670305MShop0710Cashier-0163046BF5"
